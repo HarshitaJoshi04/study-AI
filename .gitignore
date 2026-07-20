@@ -8,5 +8,5 @@ frontend/.env
 
 dist/
 build/
-
+backend/src/downloads/
 .vscode/
