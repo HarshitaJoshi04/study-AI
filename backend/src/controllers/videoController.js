@@ -183,3 +183,43 @@ export const getMyVideos = async (req, res) => {
     });
   }
 };
+
+export const deleteVideo = async (req, res) => {
+  try {
+    const video = await Video.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    // Delete Cloudinary audio if it still exists
+    if (video.cloudinaryPublicId) {
+      await deleteCloudinaryAudio(video.cloudinaryPublicId);
+    }
+
+    // Delete local downloaded file
+    if (video.localAudioPath) {
+      await deleteLocalAudio(video.localAudioPath);
+    }
+
+    await video.deleteOne();
+
+    return res.json({
+      success: true,
+      message: "Video deleted successfully",
+    });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};

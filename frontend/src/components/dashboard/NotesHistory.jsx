@@ -1,24 +1,19 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import useVideos from "../../hooks/useVideos";
-import StatusCard from "./StatusCard";
-import { FileText, ExternalLink, Download, Inbox } from "lucide-react";
+import { FileText,DeleteIcon, ExternalLink, Download, Inbox } from "lucide-react";
 
-const display = { fontFamily: "'Lora', ui-serif, Georgia, serif" };
-const mono = { fontFamily: "'JetBrains Mono', ui-monospace, monospace" };
+const display = {
+  fontFamily: "'Lora', ui-serif, Georgia, serif",
+};
+
+const mono = {
+  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+};
 
 const NotesHistory = () => {
-  const { videos, loading } = useVideos();
+  const { videos, loading, refreshVideos } = useVideos();
 
-  const fetchVideos = async () => {
-    try {
-      const res = await api.get("/videos");
-
-      setVideos(res.data.videos);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   if (loading) {
     return (
@@ -27,7 +22,17 @@ const NotesHistory = () => {
       </p>
     );
   }
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this note?")) return;
 
+    try {
+      await api.delete(`/videos/${id}`);
+      refreshVideos();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete");
+    }
+  };
   return (
     <div className="mt-10">
       <p className="text-[11px] text-[#9C8F7A] tracking-wide mb-2" style={mono}>
@@ -68,11 +73,38 @@ const NotesHistory = () => {
               </span>
             </div>
 
-            <p className="text-[13px] text-[#9C8F7A] mb-1" style={mono}>
-              Status: {video.status}
-            </p>
+          <div className="flex items-center justify-between mt-4">
+  <div className="flex gap-3">
+    {video.googleDocUrl && (
+      <a
+        href={video.googleDocUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+      >
+        📄 Google Docs
+      </a>
+    )}
 
-            <StatusCard status={video.status} progress={video.progress} />
+    {video.pdfUrl && (
+      <a
+        href={video.pdfUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="px-4 py-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition"
+      >
+        📥 PDF
+      </a>
+    )}
+  </div>
+
+  <button
+    onClick={() => handleDelete(video._id)}
+    className="px-1 py-1 text-sm rounded-[20%] bg-red-100 text-red-600 hover:bg-red-200 transition "
+  >
+    <DeleteIcon/>
+  </button>
+</div>
 
             {(video.googleDocUrl || video.pdfUrl) && (
               <div className="flex flex-wrap items-center gap-5 mt-4 pt-4 border-t border-[#E4D5BE]">

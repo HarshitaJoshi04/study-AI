@@ -1,3 +1,5 @@
+import { ExternalLink, Download } from "lucide-react";
+
 const mono = {
   fontFamily: "'JetBrains Mono', ui-monospace, monospace",
 };
@@ -6,44 +8,61 @@ const display = {
   fontFamily: "'Lora', ui-serif, Georgia, serif",
 };
 
-const StatusCard = ({ status, progress }) => {
+const StatusCard = ({
+  status,
+  progress = 0,
+  googleDocUrl,
+  pdfUrl,
+}) => {
+
+  const getCurrentStep = () => {
+    if (progress < 20) return "Downloading YouTube Audio";
+    if (progress < 45) return "Transcribing Audio";
+    if (progress < 70) return "Generating AI Notes";
+    if (progress < 95) return "Creating Google Document";
+    if (progress < 100) return "Finalizing";
+    return "Completed";
+  };
+
   return (
-    <div className="relative overflow-hidden rounded-[30px] bg-[#FBF8F3] border border-[#E9DED0] shadow-[0_20px_60px_rgba(0,0,0,.08)] p-7">
 
-      {/* Glow */}
-      <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-[#F6A76E]/20 blur-3xl" />
-
+      
+    <div className="rounded-3xl bg-[#FBF8F3] border border-[#E9DED0] shadow-xl p-7">
+   
       {/* Header */}
 
-      <div className="relative flex items-center justify-between">
+      <div className="flex justify-between items-center">
 
         <div>
-
           <p
-            className="text-[11px] tracking-widest text-[#B09780] uppercase"
+            className="uppercase text-xs tracking-widest text-[#AA9988]"
             style={mono}
           >
             AI Processing
           </p>
 
-          <h3
-            className="text-2xl text-[#1D1915] mt-2"
+          <h2
+            className="text-3xl mt-2 text-[#1D1915]"
             style={display}
           >
             {status}
-          </h3>
+          </h2>
 
+          <p
+            className="text-sm mt-2 text-[#777]"
+            style={mono}
+          >
+            {getCurrentStep()}
+          </p>
         </div>
 
-        <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-[#FFF3E8] border border-[#F3D6C0]">
-
+        <div className="h-20 w-20 rounded-full border-4 border-[#F3D5BE] flex items-center justify-center bg-[#FFF3E8]">
           <span
-            className="text-lg font-semibold text-[#C7652E]"
+            className="font-bold text-xl text-[#C7652E]"
             style={mono}
           >
             {progress}%
           </span>
-
         </div>
 
       </div>
@@ -55,7 +74,7 @@ const StatusCard = ({ status, progress }) => {
         <div className="h-3 rounded-full bg-[#ECE4D9] overflow-hidden">
 
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[#C7652E] via-[#DD8B54] to-[#F4B183] transition-all duration-700"
+            className="h-full bg-gradient-to-r from-orange-500 to-orange-300 transition-all duration-700"
             style={{
               width: `${progress}%`,
             }}
@@ -67,65 +86,80 @@ const StatusCard = ({ status, progress }) => {
 
       {/* Steps */}
 
-      <div className="mt-8 grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 mt-8">
 
-        <div className="rounded-xl bg-[#FFFDF9] border border-[#ECE4D9] p-3">
-          <p
-            className="text-[10px] uppercase text-[#A79A89]"
-            style={mono}
-          >
-            STEP 1
-          </p>
+        {[
+          "Downloading",
+          "Transcription",
+          "Generating Notes",
+          "Creating Document",
+        ].map((step, index) => {
 
-          <p className="text-sm mt-1 text-[#3D372F]">
-            Downloading video
-          </p>
-        </div>
+          const completed = progress >= (index + 1) * 25;
 
-        <div className="rounded-xl bg-[#FFFDF9] border border-[#ECE4D9] p-3">
-          <p
-            className="text-[10px] uppercase text-[#A79A89]"
-            style={mono}
-          >
-            STEP 2
-          </p>
+          return (
+            <div
+              key={index}
+              className={`rounded-xl border p-3 ${
+                completed
+                  ? "bg-green-50 border-green-300"
+                  : "bg-white border-[#ECE4D9]"
+              }`}
+            >
+              <p
+                className="uppercase text-[10px] text-gray-500"
+                style={mono}
+              >
+                STEP {index + 1}
+              </p>
 
-          <p className="text-sm mt-1 text-[#3D372F]">
-            AI transcription
-          </p>
-        </div>
-
-        <div className="rounded-xl bg-[#FFFDF9] border border-[#ECE4D9] p-3">
-          <p
-            className="text-[10px] uppercase text-[#A79A89]"
-            style={mono}
-          >
-            STEP 3
-          </p>
-
-          <p className="text-sm mt-1 text-[#3D372F]">
-            Writing notes
-          </p>
-        </div>
-
-        <div className="rounded-xl bg-[#FFFDF9] border border-[#ECE4D9] p-3">
-          <p
-            className="text-[10px] uppercase text-[#A79A89]"
-            style={mono}
-          >
-            STEP 4
-          </p>
-
-          <p className="text-sm mt-1 text-[#3D372F]">
-            Creating PDF
-          </p>
-        </div>
+              <p className="mt-1 text-sm">
+                {completed ? "✅ " : "⏳ "}
+                {step}
+              </p>
+            </div>
+          );
+        })}
 
       </div>
 
+      {/* Links */}
+
+      {(googleDocUrl || pdfUrl) && (
+
+        <div className="mt-8 border-t pt-6 flex flex-wrap gap-4">
+
+          {googleDocUrl && (
+            <a
+              href={googleDocUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
+            >
+              <ExternalLink size={18} />
+              Open Google Docs
+            </a>
+          )}
+
+          {pdfUrl && (
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-green-600 text-white hover:bg-green-700"
+            >
+              <Download size={18} />
+              Download PDF
+            </a>
+          )}
+
+        </div>
+
+      )}
+
       {/* Footer */}
 
-      <div className="mt-7 flex justify-between items-center border-t border-[#ECE4D9] pt-5">
+      <div className="mt-8 border-t border-[#ECE4D9] pt-5 flex justify-between items-center">
 
         <span
           className="text-xs text-[#A79A89]"
@@ -134,8 +168,21 @@ const StatusCard = ({ status, progress }) => {
           Gemini 2.5 • AssemblyAI
         </span>
 
-        <span className="text-sm font-medium text-[#C7652E] animate-pulse">
-          Please don't close this page
+        <span
+          className={`text-sm font-medium ${
+            status === "processing"
+              ? "text-orange-600 animate-pulse"
+              : status === "completed"
+              ? "text-green-600"
+              : status === "failed"
+              ? "text-red-600"
+              : "text-gray-600"
+          }`}
+        >
+          {status === "pending" && "⌛ Waiting"}
+          {status === "processing" && "⚡ AI is generating your notes..."}
+          {status === "completed" && "🎉 Notes Ready"}
+          {status === "failed" && "❌ Processing Failed"}
         </span>
 
       </div>
