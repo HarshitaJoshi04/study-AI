@@ -15,10 +15,9 @@ import { triggerMakeScenario } from "../services/makeService.js";
 
 import { env } from "../config/env.js";
 
-
 export const submitVideo = async (req, res) => {
   try {
-    const { youtubeUrl, noteType,language } = req.body;
+    const { youtubeUrl, noteType, language } = req.body;
 
     if (!youtubeUrl || !noteType) {
       return res.status(400).json({
@@ -35,7 +34,7 @@ export const submitVideo = async (req, res) => {
     }
 
     const jobId = uuidv4();
-    
+
     // Create Job
     const video = await Video.create({
       jobId,
@@ -60,19 +59,19 @@ export const submitVideo = async (req, res) => {
 
     await video.save();
     console.log({
-  jobId: video.jobId,
-  userId: video.user.toString(),
-  recipientEmail: video.recipientEmail,
-  noteType: video.noteType,
-  audioUrl: video.audioUrl,
-});
+      jobId: video.jobId,
+      userId: video.user.toString(),
+      recipientEmail: video.recipientEmail,
+      noteType: video.noteType,
+      audioUrl: video.audioUrl,
+    });
     // Trigger Make
     await triggerMakeScenario({
       jobId: video.jobId,
       userId: video.user.toString(),
       recipientEmail: video.recipientEmail,
       noteType: video.noteType,
-      language:video.language,
+      language: video.language,
       audioUrl: video.audioUrl,
     });
 
@@ -106,14 +105,14 @@ export const updateVideoStatus = async (req, res) => {
       });
     }
 
-   const {
-  jobId,
-  status,
-  progress,
-  googleDocUrl,
-  pdfUrl,
-  error,
-} = req.body;
+    const {
+      jobId,
+      status,
+      progress,
+      googleDocUrl,
+
+      error,
+    } = req.body;
 
     const video = await Video.findOne({ jobId });
 
@@ -133,10 +132,6 @@ export const updateVideoStatus = async (req, res) => {
     if (googleDocUrl) {
       video.googleDocUrl = googleDocUrl;
     }
-
-if (pdfUrl) {
-  video.pdfUrl = pdfUrl;
-}
 
     if (error) {
       video.error = error;
