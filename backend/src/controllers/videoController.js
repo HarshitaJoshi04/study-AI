@@ -106,7 +106,14 @@ export const updateVideoStatus = async (req, res) => {
       });
     }
 
-    const { jobId, status, progress, googleDocUrl, error } = req.body;
+   const {
+  jobId,
+  status,
+  progress,
+  googleDocUrl,
+  pdfUrl,
+  error,
+} = req.body;
 
     const video = await Video.findOne({ jobId });
 
@@ -127,9 +134,9 @@ export const updateVideoStatus = async (req, res) => {
       video.googleDocUrl = googleDocUrl;
     }
 
-    if (pdfUrl) {
-      video.pdfUrl = pdfUrl;
-    }
+if (pdfUrl) {
+  video.pdfUrl = pdfUrl;
+}
 
     if (error) {
       video.error = error;
