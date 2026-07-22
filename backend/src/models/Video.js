@@ -41,7 +41,8 @@ status: {
         "processing",
         "sending_email",
         "completed",
-        "failed"
+        "failed",
+        "downloading"
     ],
     default: "pending"
 },
