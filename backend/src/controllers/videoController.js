@@ -40,6 +40,7 @@ export const submitVideo = async (req, res) => {
       jobId,
       user: req.user._id,
       recipientEmail: req.user.email,
+      title: result.title,
       youtubeUrl,
       noteType,
       language,
@@ -105,13 +106,7 @@ export const updateVideoStatus = async (req, res) => {
       });
     }
 
-    const {
-      jobId,
-      status,
-      progress,
-      googleDocUrl,
-      error,
-    } = req.body;
+    const { jobId, status, progress, googleDocUrl, error } = req.body;
 
     console.log("Webhook received:", req.body);
 
