@@ -110,9 +110,10 @@ export const updateVideoStatus = async (req, res) => {
       status,
       progress,
       googleDocUrl,
-
       error,
     } = req.body;
+
+    console.log("Webhook received:", req.body);
 
     const video = await Video.findOne({ jobId });
 
@@ -123,39 +124,60 @@ export const updateVideoStatus = async (req, res) => {
       });
     }
 
-    if (progress !== undefined) {
-      video.progress = progress;
+    // Prevent duplicate completed webhooks
+    if (video.status === "completed") {
+      return res.status(200).json({
+        success: true,
+        message: "Job already completed",
+      });
     }
 
-    video.status = status;
+    // Update progress
+    if (progress !== undefined) {
+      video.progress = Number(progress);
+    }
 
+    // Update status
+    if (status) {
+      video.status = status;
+    }
+
+    // Save Google Doc URL
     if (googleDocUrl) {
       video.googleDocUrl = googleDocUrl;
     }
 
+    // Save error if any
     if (error) {
       video.error = error;
-    }
-
-    // Cleanup after successful completion
-    if (status === "completed") {
-      if (video.cloudinaryPublicId) {
-        await deleteCloudinaryAudio(video.cloudinaryPublicId);
-      }
-
-      if (video.localAudioPath) {
-        await deleteLocalAudio(video.localAudioPath);
-      }
+      video.status = "failed";
     }
 
     await video.save();
 
+    // Cleanup after successful completion
+    if (status === "completed") {
+      try {
+        if (video.cloudinaryPublicId) {
+          await deleteCloudinaryAudio(video.cloudinaryPublicId);
+        }
+
+        if (video.localAudioPath) {
+          await deleteLocalAudio(video.localAudioPath);
+        }
+      } catch (cleanupError) {
+        console.error("Cleanup failed:", cleanupError);
+      }
+    }
+
     return res.status(200).json({
       success: true,
       message: "Video updated successfully",
+      progress: video.progress,
+      status: video.status,
     });
   } catch (err) {
-    console.error(err);
+    console.error("Webhook Error:", err);
 
     return res.status(500).json({
       success: false,

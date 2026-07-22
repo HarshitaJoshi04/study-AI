@@ -11,10 +11,32 @@ const mono = {
   fontFamily: "'JetBrains Mono', ui-monospace, monospace",
 };
 
+
+const StepCard = ({ title, active }) => (
+  <div
+    className={`rounded-xl border p-4 transition-all ${
+      active
+        ? "border-green-400 bg-green-50"
+        : "border-[#E4D5BE] bg-white"
+    }`}
+  >
+    <p className="text-[10px] text-gray-500 uppercase mb-1">
+      STEP
+    </p>
+
+    <p className="flex items-center gap-2 text-sm">
+      {active ? "✅" : "⏳"}
+
+      {title}
+    </p>
+  </div>
+);
+
+
 const NotesHistory = () => {
   const { videos, loading, refreshVideos } = useVideos();
 
-
+ 
   if (loading) {
     return (
       <p className="mt-10 text-[14px] text-[#9C8F7A]" style={mono}>
@@ -54,85 +76,107 @@ const NotesHistory = () => {
 
       <div className="space-y-4">
         {videos.map((video) => (
-          <div
-            key={video._id}
-            className="bg-[#FBF6ED] border border-[#E4D5BE] rounded-2xl p-6"
-          >
-            <div className="flex items-start justify-between gap-4 mb-1">
-              <div className="flex items-center gap-2 min-w-0">
-                <FileText size={16} className="text-[#C8562E] shrink-0" />
-                <h3
-                  className="text-[14px] text-[#1C1712] truncate"
-                  style={mono}
-                >
-                  {video.youtubeUrl}
-                </h3>
-              </div>
-              <span className="shrink-0 text-[11px] text-[#5A4F40] bg-[#F3E1CC] px-2.5 py-1 rounded-full capitalize">
-                {video.noteType}
-              </span>
-            </div>
-
-          <div className="flex items-center justify-between mt-4">
-  <div className="flex gap-3">
-    {video.googleDocUrl && (
-      <a
-        href={video.googleDocUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+     <div
+  key={video._id}
+  className="bg-[#FBF6ED] border border-[#E4D5BE] rounded-2xl p-6"
+>
+  <div className="flex justify-between items-start mb-3">
+    <div>
+      <h3
+        className="text-sm font-medium text-[#1C1712] truncate"
+        style={mono}
       >
-        📄 Google Docs
-      </a>
-    )}
+        {video.youtubeUrl}
+      </h3>
 
-    {video.pdfUrl && (
-      <a
-        href={video.pdfUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="px-4 py-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition"
-      >
-        📥 PDF
-      </a>
-    )}
+      <p className="text-xs text-[#7D6E59] mt-1 capitalize">
+        {video.status.replaceAll("_", " ")}
+      </p>
+    </div>
+
+    <span className="text-xs bg-[#F3E1CC] px-3 py-1 rounded-full">
+      {video.progress || 0}%
+    </span>
   </div>
 
-  <button
-    onClick={() => handleDelete(video._id)}
-    className="px-1 py-1 text-sm rounded-[20%] bg-red-100 text-red-600 hover:bg-red-200 transition "
-  >
-    <DeleteIcon/>
-  </button>
-</div>
+  {/* Progress Bar */}
 
-            {(video.googleDocUrl || video.pdfUrl) && (
-              <div className="flex flex-wrap items-center gap-5 mt-4 pt-4 border-t border-[#E4D5BE]">
-                {video.googleDocUrl && (
-                  <a
-                    href={video.googleDocUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1C1712] hover:text-[#C8562E] transition-colors"
-                  >
-                    <ExternalLink size={14} />
-                    Open Google Docs
-                  </a>
-                )}
-                {video.pdfUrl && (
-                  <a
-                    href={video.pdfUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1C1712] hover:text-[#C8562E] transition-colors"
-                  >
-                    <Download size={14} />
-                    Download PDF
-                  </a>
-                )}
-              </div>
-            )}
-          </div>
+  <div className="w-full h-2 bg-[#E8DCCB] rounded-full overflow-hidden mb-6">
+    <div
+      className="h-full bg-[#F97316] transition-all duration-500"
+      style={{
+        width: `${video.progress || 0}%`,
+      }}
+    />
+  </div>
+
+  {/* Steps */}
+
+  <div className="grid grid-cols-2 gap-3 mb-6">
+
+    <StepCard
+      title="Downloading"
+      active={video.progress >= 20}
+    />
+
+    <StepCard
+      title="Transcription"
+      active={video.progress >= 40}
+    />
+
+    <StepCard
+      title="Generating Notes"
+      active={video.progress >= 70}
+    />
+
+    <StepCard
+      title="Creating Document"
+      active={video.progress >= 90}
+    />
+
+  </div>
+
+  {/* Completed Buttons */}
+
+  {video.status === "completed" && (
+    <div className="flex items-center justify-between">
+
+      <div className="flex gap-3">
+
+        {video.googleDocUrl && (
+          <a
+            href={video.googleDocUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200"
+          >
+            📄 Google Docs
+          </a>
+        )}
+
+        {video.pdfUrl && (
+          <a
+            href={video.pdfUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="px-4 py-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200"
+          >
+            📥 PDF
+          </a>
+        )}
+
+      </div>
+
+      <button
+        onClick={() => handleDelete(video._id)}
+        className="px-2 py-2 rounded bg-red-100 text-red-600"
+      >
+        <DeleteIcon size={16}/>
+      </button>
+
+    </div>
+  )}
+</div>
         ))}
       </div>
     </div>
