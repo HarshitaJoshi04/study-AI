@@ -18,7 +18,20 @@ const videoSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+thumbnail: {
+  type: String,
+  default: "",
+},
 
+channel: {
+  type: String,
+  default: "",
+},
+
+duration: {
+  type: Number,
+  default: 0,
+},
     noteType: {
       type: String,
       enum: [

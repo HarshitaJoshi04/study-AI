@@ -35,37 +35,43 @@ export const submitVideo = async (req, res) => {
 
     const jobId = uuidv4();
 
-    // Create Job
+    // Download audio + fetch metadata
+    const {
+      audioPath,
+      title,
+      duration,
+      thumbnail,
+      channel,
+    } = await downloadAudio(youtubeUrl);
+
+    // Create video document
     const video = await Video.create({
       jobId,
       user: req.user._id,
       recipientEmail: req.user.email,
-      title: result.title,
+
       youtubeUrl,
+      title,
       noteType,
       language,
+
+      duration,
+      thumbnail,
+      channel,
+
       status: "pending",
+      progress: 0,
     });
 
-    // Download MP3
-    const { audioPath } = await downloadAudio(youtubeUrl);
-
-    // Upload MP3 to Cloudinary
+    // Upload audio to Cloudinary
     const { audioUrl, publicId } = await uploadAudio(audioPath);
 
-    // Save upload information
     video.audioUrl = audioUrl;
     video.cloudinaryPublicId = publicId;
     video.localAudioPath = audioPath;
 
     await video.save();
-    console.log({
-      jobId: video.jobId,
-      userId: video.user.toString(),
-      recipientEmail: video.recipientEmail,
-      noteType: video.noteType,
-      audioUrl: video.audioUrl,
-    });
+
     // Trigger Make
     await triggerMakeScenario({
       jobId: video.jobId,
@@ -77,7 +83,6 @@ export const submitVideo = async (req, res) => {
     });
 
     video.status = "processing";
-
     await video.save();
 
     return res.status(201).json({
@@ -87,11 +92,11 @@ export const submitVideo = async (req, res) => {
       status: video.status,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Submit Video Error:", error);
 
     return res.status(500).json({
       success: false,
-      message: error.message || "Server Error",
+      message: error.message,
     });
   }
 };
