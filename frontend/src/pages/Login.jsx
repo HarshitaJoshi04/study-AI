@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 import { BookOpen, Mail, Lock, ArrowRight } from "lucide-react";
+import AuthNavbar from "../components/AuthNavbar";
 
 const display = { fontFamily: "'Lora', ui-serif, Georgia, serif" };
 const mono = { fontFamily: "'JetBrains Mono', ui-monospace, monospace" };
@@ -44,7 +45,10 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F3E8DA] flex items-center justify-center px-5 py-16">
+<div className="min-h-screen bg-[#F3E8DA]">
+  <AuthNavbar />
+
+  <div className="flex items-center justify-center px-5 py-16">
       <div className="w-full max-w-md">
         <Link
           to="/"
@@ -136,7 +140,7 @@ const Login = () => {
           </Link>
         </p>
       </div>
-    </div>
+    </div></div>
   );
 };
 

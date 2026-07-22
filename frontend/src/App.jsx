@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-
+import History from "./pages/History"
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -15,6 +15,9 @@ function App() {
       />
 
 
+
+<Route path="/history" element={<History/>
+} />
       <Route
         path="/login"
         element={<Login />}

@@ -99,92 +99,96 @@ const [language, setLanguage] = useState("English");
 
         {/* URL */}
 
-        <div>
+{/* URL */}
 
-          <label className="block text-sm font-medium text-[#3F372F] mb-3">
-            YouTube Video
-          </label>
+<div>
+  <label className="block text-sm font-medium text-[#3F372F] mb-3">
+    YouTube Video
+  </label>
 
-          <div className="flex items-center gap-4 bg-white border border-[#E7DED2] rounded-2xl px-5 py-4 focus-within:border-[#C7652E] transition">
+  <div className="flex items-center gap-4 bg-white border border-[#E7DED2] rounded-2xl px-5 py-4 focus-within:border-[#C7652E] transition">
+    <PlayCircle size={22} className="text-[#FF4E45]" />
 
-            <PlayCircle
-              size={22}
-              className="text-[#FF4E45]"
-            />
+    <input
+      value={youtubeUrl}
+      onChange={(e) => setYoutubeUrl(e.target.value)}
+      placeholder="https://youtube.com/watch?v=..."
+      className="flex-1 bg-transparent outline-none text-[15px] placeholder:text-[#A89D8F]"
+    />
+  </div>
+</div>
 
-            <input
-              value={youtubeUrl}
-              onChange={(e) => setYoutubeUrl(e.target.value)}
-              placeholder="https://youtube.com/watch?v=..."
-              className="flex-1 bg-transparent outline-none text-[15px] placeholder:text-[#A89D8F]"
-            />
+{/* Note Type + Language */}
 
-          </div>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-        </div>
+  <div>
+    <label className="block text-sm font-medium text-[#3F372F] mb-3">
+      Notes Style
+    </label>
 
-        {/* Note Type */}
+    <div className="flex items-center gap-4 bg-white border border-[#E7DED2] rounded-2xl px-5 py-4">
+      <FileText size={20} className="text-[#C7652E]" />
 
-        <div>
+      <select
+        value={noteType}
+        onChange={(e) => setNoteType(e.target.value)}
+        className="flex-1 bg-transparent outline-none appearance-none cursor-pointer"
+      >
+        {NOTE_TYPES.map((item) => (
+          <option key={item.value} value={item.value}>
+            {item.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
 
-          <label className="block text-sm font-medium text-[#3F372F] mb-3">
-            Notes Style
-          </label>
+  <div>
+    <label className="block text-sm font-medium text-[#3F372F] mb-3">
+      Output Language
+    </label>
 
-          <div className="flex items-center gap-4 bg-white border border-[#E7DED2] rounded-2xl px-5 py-4">
+    <div className="flex items-center gap-4 bg-white border border-[#E7DED2] rounded-2xl px-5 py-4">
 
-            <FileText
-              size={20}
-              className="text-[#C7652E]"
-            />
+      <span className="text-xl">🌍</span>
 
-            <select
-              value={noteType}
-              onChange={(e) => setNoteType(e.target.value)}
-              className="flex-1 bg-transparent outline-none appearance-none"
-            >
-              {NOTE_TYPES.map((item) => (
-                <option
-                  key={item.value}
-                  value={item.value}
-                >
-                  {item.label}
-                </option>
-              ))}
-            </select>
+      <select
+        value={language}
+        onChange={(e) => setLanguage(e.target.value)}
+        className="flex-1 bg-transparent outline-none appearance-none cursor-pointer"
+      >
+        <option value="English">🇺🇸 English</option>
+        <option value="Hindi">🇮🇳 Hindi</option>
+        <option value="Hinglish">🗣 Hinglish</option>
+      </select>
+    </div>
+  </div>
 
-          </div>
+</div>
 
-        </div>
-<div><label>Language</label>
+{/* Submit */}
 
-<select
-  value={language}
-  onChange={(e) => setLanguage(e.target.value)}
+<button
+  type="submit"
+  disabled={loading}
+  className="group w-full bg-[#1D1915] hover:bg-[#302720] text-white rounded-2xl py-4 font-medium flex justify-center items-center gap-3 transition-all duration-300 hover:-translate-y-1 disabled:opacity-60"
 >
-  <option>English</option>
-  <option>Hindi</option>
-  <option>Hinglish</option>
-
-</select></div>
-        {/* Button */}
-
-        <button
-          disabled={loading}
-          className="group w-full bg-[#1D1915] hover:bg-[#302720] text-white rounded-2xl py-4 font-medium flex justify-center items-center gap-3 transition-all duration-300 hover:-translate-y-1 disabled:opacity-60"
-        >
-          {loading ? (
-            "Generating Notes..."
-          ) : (
-            <>
-              Generate Notes
-              <ArrowRight
-                size={18}
-                className="group-hover:translate-x-1 transition"
-              />
-            </>
-          )}
-        </button>
+  {loading ? (
+    <div className="flex items-center gap-3">
+      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+      Generating Notes...
+    </div>
+  ) : (
+    <>
+      Generate Notes
+      <ArrowRight
+        size={18}
+        className="group-hover:translate-x-1 transition"
+      />
+    </>
+  )}
+</button>
 
         {/* Footer */}
 
