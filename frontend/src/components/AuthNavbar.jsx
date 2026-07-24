@@ -48,12 +48,7 @@ export default function AuthNavbar() {
             Home
           </Link>
 
-          <a
-            href="#features"
-            className="hover:text-[#C8562E] transition"
-          >
-            Features
-          </a>
+
 
           <Link
             to="/login"
@@ -93,13 +88,6 @@ export default function AuthNavbar() {
               Home
             </Link>
 
-            <a
-              href="#features"
-              onClick={() => setOpen(false)}
-              className="hover:text-[#C8562E]"
-            >
-              Features
-            </a>
 
             <Link
               to="/login"
