@@ -18,9 +18,7 @@ const mono = {
 
 const NOTE_TYPES = [
   { value: "full", label: "Detailed Notes" },
-  { value: "exam", label: "Exam Notes" },
-  { value: "timestamp", label: "Timestamp Notes" },
-  { value: "flashcards", label: "Flashcards" },
+
 ];
 
 export default function UploadForm() {
@@ -160,7 +158,7 @@ const [language, setLanguage] = useState("English");
       >
         <option value="English">🇺🇸 English</option>
         <option value="Hindi">🇮🇳 Hindi</option>
-        <option value="Hinglish">🗣 Hinglish</option>
+        <option value="Hinglish">Hinglish</option>
       </select>
     </div>
   </div>
