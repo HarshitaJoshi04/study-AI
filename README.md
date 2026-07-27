@@ -166,7 +166,11 @@ Backend → Webhook → AssemblyAI → Gemini → Google Docs → PDF → email 
 
 ## Demo
 
-![StudyScribe Demo](assets/video/project.mp4)
+
+
+https://github.com/user-attachments/assets/7bbdc940-571e-494c-a9e5-8839b1d2359a
+
+
 
 
 
