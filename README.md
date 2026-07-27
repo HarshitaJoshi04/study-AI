@@ -180,7 +180,7 @@ https://github.com/user-attachments/assets/7bbdc940-571e-494c-a9e5-8839b1d2359a
 
 ### Clone the repository
 ```bash
-git clone https://github.com/harshitajoshi04/studyscribe-ai.git
+git clone https://github.com/HarshitaJoshi04/study-AI.git
 ```
 
 ### Install Frontend
