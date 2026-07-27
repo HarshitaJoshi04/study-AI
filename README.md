@@ -135,11 +135,38 @@ Display in Dashboard
 
 ## 📸 Screens
 
-![alt text](image-1.png)  ![alt text](<Screenshot 2026-07-27 164130.png>)  ![alt text](<Screenshot 2026-07-27 164141.png>)  ![alt text](<Screenshot 2026-07-27 164154.png>)   ![alt text](<Screenshot 2026-07-27 164307.png>)  ![alt text](<Screenshot 2026-07-27 164249.png>)
-![alt text](<Screenshot 2026-07-27 184850-1.png>) ![alt text](<Screenshot 2026-07-27 184850-2.png>) ![alt text](<Screenshot 2026-07-27 185044-1.png>)
+## Landing Page
+
+![Landing Page](assets/images/image.png)
+![Landing Page](assets/images/howitworks.png)
+![Landing Page](assets/images/language.png)
+![Landing Page](assets/images/footer.png)
+
+## Login Page
+![Login Page](assets/images/login.png)
+
+## Register page
+![Register Page](assets/images/register.png)
+
+## Dashboard
+![Dashboard](assets/images/dashboard.png)
+![Dashboard](assets/images/statusbar.png)
+
+## History Page
+![History page](assets/images/history.png)
+
+## Make.com Automation
+
+The automation pipeline:
+
+Backend → Webhook → AssemblyAI → Gemini → Google Docs → PDF → email → Callback
+
+![Make Automation](assets/images/make.png)
 
 
-<video controls src="project.mp4" title="Title"></video>
+## Demo
+
+![StudyScribe Demo](assets/video/project.mp4)
 
 
 
