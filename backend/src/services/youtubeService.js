@@ -40,7 +40,26 @@ export const downloadAudio = async (youtubeUrl) => {
       channel: info.uploader,
     };
   } catch (error) {
-    console.error("Download Error:", error);
-    throw new Error("Failed to download YouTube audio.");
+  console.error("Download Error:", error);
+
+  let message = "Unknown download error";
+  let code = "DOWNLOAD_FAILED";
+
+  if (error.message.includes("Video unavailable")) {
+    message = "This YouTube video is unavailable.";
+    code = "VIDEO_UNAVAILABLE";
+  } else if (error.message.includes("Private video")) {
+    message = "This video is private.";
+    code = "PRIVATE_VIDEO";
+  } else if (error.message.includes("Sign in")) {
+    message = "This video requires authentication.";
+    code = "LOGIN_REQUIRED";
   }
+
+  throw {
+    stage: "DOWNLOAD",
+    code,
+    message,
+  };
+}
 };
