@@ -1,45 +1,69 @@
-import cloudinary from "../config/cloudinary.js";
+import ytDlp from "yt-dlp-exec";
+import path from "path";
 import fs from "fs";
+import { randomUUID } from "crypto";
 
-export const uploadAudio = async (audioPath) => {
+const DOWNLOAD_DIR = path.resolve("src/downloads");
+
+if (!fs.existsSync(DOWNLOAD_DIR)) {
+  fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
+}
+
+export const downloadAudio = async (youtubeUrl) => {
   try {
-    const result = await cloudinary.uploader.upload(audioPath, {
-      resource_type: "video",
-      folder: "studyscribe-audio",
-      use_filename: true,
-      unique_filename: true,
+    // Fetch metadata
+    const info = await ytDlp(youtubeUrl, {
+      dumpSingleJson: true,
+      noWarnings: true,
+      noCheckCertificates: true,
+      preferFreeFormats: true,
+      extractorArgs: "youtube:player_client=android",
+    });
+
+    const fileName = `${randomUUID()}.mp3`;
+    const outputPath = path.join(DOWNLOAD_DIR, fileName);
+
+    // Download audio
+    await ytDlp(youtubeUrl, {
+      extractAudio: true,
+      audioFormat: "mp3",
+      output: outputPath,
+      ffmpegLocation: "ffmpeg",
+      extractorArgs: "youtube:player_client=android",
     });
 
     return {
-      audioUrl: result.secure_url,
-      publicId: result.public_id,
+      success: true,
+      audioPath: outputPath,
+      title: info.title,
+      duration: info.duration,
+      thumbnail: info.thumbnail,
+      channel: info.uploader,
     };
   } catch (error) {
-    console.error("Cloudinary Upload Error:", error);
+    console.error("Download Error:", error);
 
-    throw new Error("Failed to upload audio to Cloudinary.");
-  }
-};
+    const err = error.stderr || error.message || "";
 
-export const deleteCloudinaryAudio = async (publicId) => {
-  try {
-    await cloudinary.uploader.destroy(publicId, {
-      resource_type: "video",
-    });
+    let message = "Unknown download error";
+    let code = "DOWNLOAD_FAILED";
 
-    console.log("Cloudinary audio deleted.");
-  } catch (error) {
-    console.error("Cloudinary Delete Error:", error);
-  }
-};
-
-export const deleteLocalAudio = async (audioPath) => {
-  try {
-    if (fs.existsSync(audioPath)) {
-      fs.unlinkSync(audioPath);
-      console.log("Local audio deleted.");
+    if (err.includes("Video unavailable")) {
+      message = "This YouTube video is unavailable.";
+      code = "VIDEO_UNAVAILABLE";
+    } else if (err.includes("Private video")) {
+      message = "This video is private.";
+      code = "PRIVATE_VIDEO";
+    } else if (err.includes("Sign in to confirm")) {
+      message =
+        "YouTube blocked this download. Please try another video.";
+      code = "LOGIN_REQUIRED";
     }
-  } catch (error) {
-    console.error("Local Delete Error:", error);
+
+    throw {
+      stage: "DOWNLOAD",
+      code,
+      message,
+    };
   }
 };
